@@ -18,7 +18,8 @@ app = FastAPI(
 # CORS: allow local dev (Vite) and production (Vercel) origins
 ALLOWED_ORIGINS = [
     "http://localhost:5173", 
-    "https://social-media-analyzer.vercel.app",  # Production URL
+    "https://social-media-analyzer.vercel.app",
+    "https://social-media-analyzer-subhajit.vercel.app",
     os.environ.get("FRONTEND_URL", ""),  # Flexible override url
 ]
 
