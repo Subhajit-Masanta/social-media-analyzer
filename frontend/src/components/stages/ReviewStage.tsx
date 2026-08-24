@@ -87,9 +87,9 @@ export function ReviewStage({ file, text, ocrConfidence, loading, error, onAnaly
         </Alert>
       )}
 
-    <Card sx={{ display: 'flex', flexDirection: 'column' }}>
+      <Card sx={{ display: 'flex', flexDirection: 'column' }}>
         <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: 4, p: { xs: 3, md: 4 }, pb: { xs: 4, md: 5 } }}>
-          
+
           <Box>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
               <Typography variant="h6" sx={{ fontSize: '0.95rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 1 }}>
@@ -107,9 +107,9 @@ export function ReviewStage({ file, text, ocrConfidence, loading, error, onAnaly
                   </Button>
                 </Tooltip>
                 {file && (
-                  <Button 
-                    size="small" 
-                    startIcon={<VisibilityIcon />} 
+                  <Button
+                    size="small"
+                    startIcon={<VisibilityIcon />}
                     onClick={() => setModalOpen(true)}
                     sx={{ color: 'text.secondary', textTransform: 'none', '&:hover': { background: 'rgba(255,255,255,0.05)' } }}
                   >
@@ -118,7 +118,7 @@ export function ReviewStage({ file, text, ocrConfidence, loading, error, onAnaly
                 )}
               </Box>
             </Box>
-            
+
             <TextField
               id="review-textarea"
               multiline
@@ -131,9 +131,9 @@ export function ReviewStage({ file, text, ocrConfidence, loading, error, onAnaly
               disabled={loading}
               variant="outlined"
               sx={{
-                '& .MuiInputBase-root': { 
-                  fontFamily: 'inherit', 
-                  fontSize: '0.95rem', 
+                '& .MuiInputBase-root': {
+                  fontFamily: 'inherit',
+                  fontSize: '0.95rem',
                   lineHeight: 1.7,
                   cursor: 'text',
                   p: 2.5,
@@ -174,10 +174,10 @@ export function ReviewStage({ file, text, ocrConfidence, loading, error, onAnaly
               onChange={(_, val) => val && setPlatform(val)}
               disabled={loading}
               fullWidth
-              sx={{ 
+              sx={{
                 gap: { xs: 1, md: 2 },
                 flexDirection: { xs: 'column', sm: 'row' },
-                opacity: loading ? 0.4 : 1, 
+                opacity: loading ? 0.4 : 1,
                 pointerEvents: loading ? 'none' : 'auto',
                 transition: 'opacity 0.2s ease'
               }}
@@ -233,9 +233,9 @@ export function ReviewStage({ file, text, ocrConfidence, loading, error, onAnaly
         </CardContent>
       </Card>
 
-      {/* Document Preview Modal */}
-      <Dialog 
-        open={modalOpen} 
+      {/* Document Preview section */}
+      <Dialog
+        open={modalOpen}
         onClose={() => setModalOpen(false)}
         maxWidth="lg"
         fullWidth

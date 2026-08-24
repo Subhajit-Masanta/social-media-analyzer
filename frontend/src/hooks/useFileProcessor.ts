@@ -25,7 +25,7 @@ export function useFileProcessor() {
   const patch = (update: Partial<FileProcessingState>) =>
     setState(prev => ({ ...prev, ...update }));
 
-  /** Called when a file is dropped / selected */
+  /** Called when a file is dropped/selected    */
   const processFile = useCallback(async (file: File) => {
     if (!ACCEPTED.includes(file.type)) {
       patch({ error: 'Only PDF, PNG, JPG, and WEBP files are supported.' });

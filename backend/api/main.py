@@ -3,7 +3,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 
-# Load environment variables from .env file
+# Load secrets from .env file
 load_dotenv()
 
 from .models import AnalyzeRequest, AnalysisResult, ErrorResponse
@@ -17,9 +17,9 @@ app = FastAPI(
 
 # CORS: allow local dev (Vite) and production (Vercel) origins
 ALLOWED_ORIGINS = [
-    "http://localhost:5173",  # Vite dev server
+    "http://localhost:5173", 
     "https://social-media-analyzer.vercel.app",  # Production URL
-    os.environ.get("FRONTEND_URL", ""),  # Flexible override
+    os.environ.get("FRONTEND_URL", ""),  # Flexible override url
 ]
 
 app.add_middleware(

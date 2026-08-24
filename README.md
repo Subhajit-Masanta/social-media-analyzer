@@ -59,6 +59,7 @@ Open `http://localhost:5173` in your browser.
 ## 🛡️ Edge Cases & Error Handling Matrix
 
 Draftline implements comprehensive error handling across the entire stack:
+- **Scanned PDF Fallback:** Automatically detects image-only PDFs and routes them through a per-page OCR fallback pipeline, skipping unreadable pages instead of aborting.
 - **Unsupported Files:** Immediately rejected at the Dropzone level.
 - **Massive Files:** Hard limit of 10MB enforced before processing.
 - **No Readable Text:** PDF parser and OCR abort gracefully if less than 5 characters are found.
@@ -73,7 +74,7 @@ Draftline is a full-stack web application designed to solve a specific problem: 
 
 The architecture is strictly decoupled for security and performance. The frontend is built in React (Vite) using Material UI to achieve a premium, non-templated SaaS aesthetic. Crucially, all file extraction happens securely client-side. The app dynamically imports `pdfjs-dist` to parse PDFs while maintaining paragraph structure, and uses WebAssembly-powered `tesseract.js` for image OCR. Sensitive files never leave the browser; only the extracted raw text payload is sent to the API.
 
-The backend is an extremely lightweight FastAPI service serving as a secure bridge to the Gemini 3.7 Flash LLM. By utilizing the new Google GenAI SDK (`Chat.send_message`) paired with strict Pydantic models, we guarantee structured, type-safe JSON output from the model. The backend implements exponential backoff to handle transient API capacity spikes, while the frontend surfaces a clean 3-stage flow (Upload → Review → Results) allowing users to manually tweak the extracted content before generating the final optimized post.
+The backend is an extremely lightweight FastAPI service serving as a secure bridge to the Gemini 3.7/3.6 Flash LLM. By utilizing the new Google GenAI SDK (`Chat.send_message`) paired with strict Pydantic models, we guarantee structured, type-safe JSON output from the model. Robust error handling is prioritized throughout, featuring an unconditional 15-page limit guardrail, per-page try/catch resilience to prevent a single noisy scanned page from aborting a multi-page document, and real-time confidence warnings to empower users rather than silently failing. The backend implements exponential backoff to handle transient API capacity spikes, while the frontend surfaces a clean 3-stage flow (Upload → Review → Results) allowing users to manually tweak the extracted content before generating the final optimized post.
 
 ## 🚀 Future Improvements
 - **Multimodal OCR:** The current implementation uses classical OCR (`tesseract.js`) securely in the client to respect the assignment brief. However, to significantly boost accuracy on complex layouts, angled photos, or handwriting, the architecture could be upgraded to skip client-side OCR entirely and pass the raw image to Gemini 3.7 Flash's multimodal vision capabilities directly. This would trade a secondary network round-trip and API quota for state-of-the-art text extraction.

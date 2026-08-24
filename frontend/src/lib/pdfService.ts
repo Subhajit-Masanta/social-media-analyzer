@@ -54,18 +54,23 @@ export async function extractTextFromPDF(
         
         if (blob) {
           const imageFile = new File([blob], `page-${pageNum}.png`, { type: 'image/png' });
-          const ocrResult = await extractTextFromImage(
-            imageFile, 
-            (ocrProgress, _label) => {
-              // Map OCR progress (0-100) to this page's fraction of the total PDF progress
-              const baseProgress = ((pageNum - 1) / totalPages) * 100;
-              const pageFraction = 1 / totalPages;
-              const scaledProgress = baseProgress + (ocrProgress * pageFraction);
-              onProgress(Math.round(scaledProgress), `OCR scanning page ${pageNum} of ${totalPages}...`);
-            },
-            `OCR page ${pageNum}`
-          );
-          pageText = ocrResult.text;
+          try {
+            const ocrResult = await extractTextFromImage(
+              imageFile, 
+              (ocrProgress, _label) => {
+                // Map OCR progress (0-100) to this page's fraction of the total PDF progress
+                const baseProgress = ((pageNum - 1) / totalPages) * 100;
+                const pageFraction = 1 / totalPages;
+                const scaledProgress = baseProgress + (ocrProgress * pageFraction);
+                onProgress(Math.round(scaledProgress), `OCR scanning page ${pageNum} of ${totalPages}...`);
+              },
+              `OCR page ${pageNum}`
+            );
+            pageText = ocrResult.text;
+          } catch (err) {
+            console.warn(`OCR failed on page ${pageNum}, skipping:`, err);
+            pageText = '';
+          }
         }
       }
     } else {

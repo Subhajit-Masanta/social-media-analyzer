@@ -5,7 +5,7 @@ let workerReady = false;
 let currentOnProgress: ((progress: number, label: string) => void) | null = null;
 
 /**
- * Returns the cached Tesseract worker, creating it only on the first call.
+ * Returns the cached Tesseract worker, creating it only on the first call. to load fast..
  * The logger is wired so the "recognizing text" progress (0–1) maps to 20–100%.
  */
 async function getWorker(): Promise<Worker> {
@@ -41,10 +41,10 @@ export async function extractTextFromImage(
   currentOnProgress = onProgress;
   currentLabelPrefix = customLabelPrefix;
 
-  // Step 1 — Compress (only if very large, to preserve text edges for OCR)
+  // Step 1 — Compress (only if very large, to preserve text edges for OCR process)
   onProgress(5, 'Optimising image…');
   let processedFile: File = file;
-  
+
   if (file.size > 4 * 1024 * 1024) {
     const { default: imageCompression } = await import('browser-image-compression');
     processedFile = await imageCompression(file, {

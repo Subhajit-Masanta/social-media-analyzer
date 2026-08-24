@@ -1,13 +1,12 @@
 import os
 import re
-import json
 import time
 from google import genai
 from google.genai import types
 from .models import AnalysisResult, AnalyzeRequest
 from .prompt_builder import build_prompt
 
-GEMINI_MODEL = "gemini-3.7-flash"
+GEMINI_MODEL = "gemini-3.6-flash"
 
 def get_client() -> genai.Client:
     api_key = os.environ.get("GEMINI_API_KEY")
@@ -23,8 +22,8 @@ def analyze_content(request: AnalyzeRequest) -> AnalysisResult:
     """
     client = get_client()
 
-    # Trim the text to prevent output token truncation.
-    # Even 3000 chars of input is plenty for a social media post analysis.
+    # Trim the text to prevent output token truncation
+    # Even 3000 chars of input is much for a social media post analysis.
     trimmed_text = request.text[:3000]
     prompt = build_prompt(trimmed_text, request.platform)
 
@@ -39,7 +38,7 @@ def analyze_content(request: AnalyzeRequest) -> AnalysisResult:
         )
         return response
 
-    # Retry up to 3 times on rate limit or high demand (503/429)
+    # Retry up to 3 times on rate limit or high demand (503/429 error)
     max_retries = 3
     for attempt in range(max_retries):
         try:

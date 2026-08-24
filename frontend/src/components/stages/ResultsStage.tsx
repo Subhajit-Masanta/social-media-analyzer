@@ -12,10 +12,10 @@ import type { AnalysisResult } from '../../types/analysis';
 import { ScoreRing } from '../ui/ScoreRing';
 
 interface Props {
-  result:   AnalysisResult;
+  result: AnalysisResult;
   platform: string;
-  onReset:  () => void;
-  onBack:   () => void;
+  onReset: () => void;
+  onBack: () => void;
 }
 
 function CopyBtn({ text }: { text: string }) {
@@ -149,7 +149,7 @@ export function ResultsStage({ result, platform, onReset, onBack }: Props) {
         </Box>
       </Box>
 
-      {/* Rewritten post */}
+      {/* Rewritten best version */}
       <Card>
         <CardContent sx={{ p: 3 }}>
           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
@@ -186,7 +186,7 @@ export function ResultsStage({ result, platform, onReset, onBack }: Props) {
         </CardContent>
       </Card>
 
-      {/* Platform tip */}
+      {/* Platform tip extraaaaa */}
       {result.platform_notes && (
         <Alert severity="info"
           sx={{ borderRadius: 3, background: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.2)', color: 'text.secondary' }}>

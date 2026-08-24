@@ -73,7 +73,7 @@ export function UploadStage({ loading, progress, label, error, onFile }: Props) 
           </Typography>
         </Box>
 
-        {/* Feature chips */}
+        {/* Feature section */}
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5 }}>
           {[
             { icon: <PictureAsPdfIcon fontSize="small" />, label: 'PDF extraction' },

@@ -1,6 +1,6 @@
 import { AnalysisResultSchema } from '../types/analysis';
 import type { AnalysisResult, AnalyzeRequest } from '../types/analysis';
-// In dev, Vite proxies /api → localhost:8000.
+// In dev, Vite proxies '/api' → localhost:8000.
 // In production, point this at your deployed Vercel backend URL.
 const API_BASE = import.meta.env.VITE_API_URL ?? '';
 

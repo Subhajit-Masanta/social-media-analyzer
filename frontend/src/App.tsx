@@ -27,7 +27,7 @@ export default function App() {
 
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', bgcolor: 'background.default' }}>
-      {/* ── Header ─────────────────────────────────────── */}
+      {/*------------- ── Header ─────────────────────────────────────── */}
       <AppBar
         position="sticky"
         elevation={0}
@@ -39,9 +39,9 @@ export default function App() {
       >
         <Toolbar sx={{ justifyContent: 'space-between' }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, cursor: 'pointer' }} onClick={reset}>
-            <Box sx={{ 
-              background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)', 
-              borderRadius: 1.5, p: 0.5, display: 'flex' 
+            <Box sx={{
+              background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)',
+              borderRadius: 1.5, p: 0.5, display: 'flex'
             }}>
               <DriveFileRenameOutlineIcon sx={{ color: '#fff', fontSize: 20 }} />
             </Box>
@@ -52,7 +52,7 @@ export default function App() {
         </Toolbar>
       </AppBar>
 
-      {/* ── Main ───────────────────────────────────────── */}
+      {/*----------- ── Main ───────────────────────────────────────── */}
       <Container maxWidth="xl" sx={{ flex: 1, pt: { xs: 3, md: 5 }, pb: 6, display: 'flex', flexDirection: 'column' }}>
         {/* Custom Pill Stepper */}
         <Box sx={{ display: 'flex', gap: { xs: 1, sm: 2 }, mb: { xs: 3, md: 4 }, flexWrap: 'wrap', justifyContent: 'flex-start' }}>
