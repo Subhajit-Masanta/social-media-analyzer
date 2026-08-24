@@ -35,14 +35,18 @@ export async function extractTextFromImage(
   file: File,
   onProgress: (progress: number, label: string) => void,
 ): Promise<{ text: string; confidence: number }> {
-  // Step 1 — Compress
+  // Step 1 — Compress (only if very large, to preserve text edges for OCR)
   onProgress(5, 'Optimising image…');
-  const { default: imageCompression } = await import('browser-image-compression');
-  const compressed = await imageCompression(file, {
-    maxSizeMB: 2,
-    maxWidthOrHeight: 2000,
-    useWebWorker: true,
-  });
+  let processedFile: File | Blob = file;
+  
+  if (file.size > 4 * 1024 * 1024) {
+    const { default: imageCompression } = await import('browser-image-compression');
+    processedFile = await imageCompression(file, {
+      maxSizeMB: 4,
+      maxWidthOrHeight: 3500,
+      useWebWorker: true,
+    });
+  }
 
   // Step 2 — Init worker (slow only on first call)
   onProgress(10, 'Initialising OCR engine…');
@@ -50,7 +54,7 @@ export async function extractTextFromImage(
   onProgress(20, 'OCR engine ready');
 
   // Step 3 — Recognise
-  const result = await worker.recognize(compressed);
+  const result = await worker.recognize(processedFile);
   onProgress(100, 'Text extracted');
 
   const text = result.data.text.trim();
