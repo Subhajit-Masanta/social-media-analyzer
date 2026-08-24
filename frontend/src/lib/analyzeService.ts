@@ -4,7 +4,7 @@ import type { AnalysisResult, AnalyzeRequest } from '../types/analysis';
 // In production, point this at your deployed Vercel backend URL.
 const API_BASE = import.meta.env.VITE_API_URL ?? '';
 
-const TIMEOUT_MS = 40_000;
+const TIMEOUT_MS = 120_000;
 
 export async function analyzeContent(req: AnalyzeRequest): Promise<AnalysisResult> {
   const controller = new AbortController();

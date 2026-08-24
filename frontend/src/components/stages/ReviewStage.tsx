@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import {
   Box, Typography, TextField, Button, Alert,
   ToggleButtonGroup, ToggleButton, CircularProgress,
-  Card, CardContent, Divider, Dialog, DialogTitle, DialogContent, IconButton
+  Card, CardContent, Divider, Dialog, DialogTitle, DialogContent, IconButton, Tooltip
 } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import CloseIcon from '@mui/icons-material/Close';
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import CheckIcon from '@mui/icons-material/Check';
 import XIcon from '@mui/icons-material/X';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
@@ -34,6 +36,13 @@ export function ReviewStage({ file, text, ocrConfidence, loading, error, onAnaly
   const [platform, setPlatform] = useState<Platform>('X');
   const [modalOpen, setModalOpen] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText(editedText);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   useEffect(() => {
     if (!file) return;
@@ -89,16 +98,28 @@ export function ReviewStage({ file, text, ocrConfidence, loading, error, onAnaly
               <Typography variant="h6" sx={{ fontSize: '0.95rem', fontWeight: 700, display: 'flex', alignItems: 'center', gap: 1 }}>
                 <EditIcon fontSize="small" sx={{ color: 'text.secondary' }} /> Edit Text
               </Typography>
-              {file && (
-                <Button 
-                  size="small" 
-                  startIcon={<VisibilityIcon />} 
-                  onClick={() => setModalOpen(true)}
-                  sx={{ color: 'text.secondary', textTransform: 'none', '&:hover': { background: 'rgba(255,255,255,0.05)' } }}
-                >
-                  View Original
-                </Button>
-              )}
+              <Box sx={{ display: 'flex', gap: 1 }}>
+                <Tooltip title={copied ? "Copied!" : "Copy text"}>
+                  <Button
+                    size="small"
+                    startIcon={copied ? <CheckIcon color="success" /> : <ContentCopyIcon />}
+                    onClick={handleCopy}
+                    sx={{ color: copied ? 'success.main' : 'text.secondary', textTransform: 'none', '&:hover': { background: 'rgba(255,255,255,0.05)' } }}
+                  >
+                    {copied ? 'Copied' : 'Copy'}
+                  </Button>
+                </Tooltip>
+                {file && (
+                  <Button 
+                    size="small" 
+                    startIcon={<VisibilityIcon />} 
+                    onClick={() => setModalOpen(true)}
+                    sx={{ color: 'text.secondary', textTransform: 'none', '&:hover': { background: 'rgba(255,255,255,0.05)' } }}
+                  >
+                    View Original
+                  </Button>
+                )}
+              </Box>
             </Box>
             
             <TextField
