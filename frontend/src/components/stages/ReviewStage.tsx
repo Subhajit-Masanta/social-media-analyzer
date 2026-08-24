@@ -54,11 +54,8 @@ export function ReviewStage({ file, text, ocrConfidence, loading, error, onAnaly
   const canAnalyze = editedText.trim().length >= 10 && !loading;
   const lowConfidence = ocrConfidence !== null && ocrConfidence < 60;
 
-  const currentPlatformLimit = PLATFORMS.find(p => p.value === platform)?.limitNum || 280;
-  const isOverLimit = editedText.length > currentPlatformLimit;
-
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', gap: 4, maxWidth: 800, mx: 'auto', width: '100%' }}>
+    <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 3, md: 4 }, maxWidth: 800, mx: 'auto', width: '100%' }}>
       {/* Header */}
       <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
         <Button
@@ -90,8 +87,8 @@ export function ReviewStage({ file, text, ocrConfidence, loading, error, onAnaly
         </Alert>
       )}
 
-      <Card sx={{ display: 'flex', flexDirection: 'column' }}>
-        <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: 4, p: { xs: 3, md: 4 } }}>
+    <Card sx={{ display: 'flex', flexDirection: 'column' }}>
+        <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: 4, p: { xs: 3, md: 4 }, pb: { xs: 4, md: 5 } }}>
           
           <Box>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
@@ -155,17 +152,12 @@ export function ReviewStage({ file, text, ocrConfidence, loading, error, onAnaly
                 },
               }}
             />
-            <Box sx={{ display: 'flex', justifyContent: 'flex-end', mt: 1.5 }}>
-              <Typography 
-                variant="caption" 
-                sx={{ 
-                  color: isOverLimit ? 'error.main' : 'text.disabled',
-                  fontWeight: isOverLimit ? 700 : 400,
-                  transition: 'color 0.2s ease',
-                  fontSize: '0.8rem',
-                }}
-              >
-                {editedText.length.toLocaleString()} / {currentPlatformLimit.toLocaleString()} characters
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mt: 1.5, flexWrap: 'wrap', gap: 1 }}>
+              <Typography variant="caption" sx={{ color: 'text.disabled' }}>
+                Don't worry about length — we'll optimize this for your selected platform.
+              </Typography>
+              <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, fontSize: '0.8rem' }}>
+                {editedText.length.toLocaleString()} characters extracted
               </Typography>
             </Box>
           </Box>
@@ -180,8 +172,15 @@ export function ReviewStage({ file, text, ocrConfidence, loading, error, onAnaly
               value={platform}
               exclusive
               onChange={(_, val) => val && setPlatform(val)}
+              disabled={loading}
               fullWidth
-              sx={{ gap: 2 }}
+              sx={{ 
+                gap: { xs: 1, md: 2 },
+                flexDirection: { xs: 'column', sm: 'row' },
+                opacity: loading ? 0.4 : 1, 
+                pointerEvents: loading ? 'none' : 'auto',
+                transition: 'opacity 0.2s ease'
+              }}
             >
               {PLATFORMS.map(({ value, icon, limitNum }) => (
                 <ToggleButton
@@ -190,9 +189,9 @@ export function ReviewStage({ file, text, ocrConfidence, loading, error, onAnaly
                   value={value}
                   sx={{
                     flex: 1,
-                    flexDirection: 'column',
-                    gap: 1,
-                    py: 3,
+                    flexDirection: { xs: 'row', sm: 'column' },
+                    gap: { xs: 1.5, sm: 1 },
+                    py: { xs: 2, sm: 3 },
                     border: '1px solid rgba(255,255,255,0.1) !important',
                     borderRadius: '16px !important',
                     background: 'rgba(255,255,255,0.02)',

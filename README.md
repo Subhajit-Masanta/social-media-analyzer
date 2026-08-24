@@ -1,14 +1,14 @@
-# PostIQ: Social Media Content Analyzer
+# Draftline - Social Media Content Analyzer
 
 🚀 **Live Demo:** [https://social-media-analyzer-pied.vercel.app/](https://social-media-analyzer-pied.vercel.app/)
 
-PostIQ is an intelligent, full-stack web application that allows users to upload marketing copy (via PDF or Image) and instantly receive a platform-specific engagement analysis and an AI-rewritten post optimized for X, LinkedIn, or Instagram.
+Draftline is an intelligent, full-stack web application that allows users to upload marketing copy (via PDF or Image) and instantly receive a platform-specific engagement analysis and an AI-rewritten post optimized for X, LinkedIn, or Instagram.
 
 ## 🚀 Features
 
 - **Local Document Parsing:** Extracts text from PDFs locally using `pdfjs-dist`, maintaining paragraph structure.
 - **Client-Side OCR:** Extracts text from images (PNG, JPG, WEBP) securely in the browser using WebAssembly-powered `tesseract.js`.
-- **AI Analysis Pipeline:** Powered by Gemini 3.6 Flash, returning strict, Pydantic-validated JSON containing an engagement score, tone analysis, strengths, improvements, and a completely rewritten post.
+- **AI Analysis Pipeline:** Powered by Gemini 3.7 Flash, returning strict, Pydantic-validated JSON containing an engagement score, tone analysis, strengths, improvements, and a completely rewritten post.
 - **Platform Specific Strategies:** Dynamically adjusts character limits, hashtag density, and tone depending on the selected platform.
 - **Side-by-Side Review:** Compare extracted text directly against the original uploaded document with a synchronized, full-screen expandable grid layout.
 
@@ -58,7 +58,7 @@ Open `http://localhost:5173` in your browser.
 
 ## 🛡️ Edge Cases & Error Handling Matrix
 
-PostIQ implements comprehensive error handling across the entire stack:
+Draftline implements comprehensive error handling across the entire stack:
 - **Unsupported Files:** Immediately rejected at the Dropzone level.
 - **Massive Files:** Hard limit of 10MB enforced before processing.
 - **No Readable Text:** PDF parser and OCR abort gracefully if less than 5 characters are found.
@@ -66,3 +66,11 @@ PostIQ implements comprehensive error handling across the entire stack:
 - **API Rate Limits / 503:** The backend automatically retries on temporary outages, and the frontend translates permanent 429s into a polite, user-facing wait message.
 - **LLM Hallucinations/Truncation:** Pydantic validators intercept broken JSON or missing keys from the LLM and return a graceful 422 error to the user rather than crashing the application.
 - **Low OCR Confidence:** Automatically detects blurry images and warns the user to manually review the extracted text before analyzing.
+
+## 📝 Assessment Write-Up
+
+Draftline is a full-stack web application designed to solve a specific problem: marketing teams often have long-form collateral (PDFs, images, whitepapers) that needs to be manually condensed and reformatted for different social media algorithms. 
+
+The architecture is strictly decoupled for security and performance. The frontend is built in React (Vite) using Material UI to achieve a premium, non-templated SaaS aesthetic. Crucially, all file extraction happens securely client-side. The app dynamically imports `pdfjs-dist` to parse PDFs while maintaining paragraph structure, and uses WebAssembly-powered `tesseract.js` for image OCR. Sensitive files never leave the browser; only the extracted raw text payload is sent to the API.
+
+The backend is an extremely lightweight FastAPI service serving as a secure bridge to the Gemini 3.7 Flash LLM. By utilizing the new Google GenAI SDK (`Chat.send_message`) paired with strict Pydantic models, we guarantee structured, type-safe JSON output from the model. The backend implements exponential backoff to handle transient API capacity spikes, while the frontend surfaces a clean 3-stage flow (Upload → Review → Results) allowing users to manually tweak the extracted content before generating the final optimized post.

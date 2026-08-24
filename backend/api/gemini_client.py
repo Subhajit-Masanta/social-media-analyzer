@@ -1,11 +1,13 @@
 import os
+import re
+import json
 import time
 from google import genai
 from google.genai import types
 from .models import AnalysisResult, AnalyzeRequest
 from .prompt_builder import build_prompt
 
-GEMINI_MODEL = "gemini-3.6-flash"
+GEMINI_MODEL = "gemini-3.7-flash"
 
 def get_client() -> genai.Client:
     api_key = os.environ.get("GEMINI_API_KEY")
@@ -20,33 +22,54 @@ def analyze_content(request: AnalyzeRequest) -> AnalysisResult:
     Raises ValueError if the response fails Pydantic validation.
     """
     client = get_client()
-    prompt = build_prompt(request.text, request.platform)
+
+    # Trim the text to prevent output token truncation.
+    # Even 3000 chars of input is plenty for a social media post analysis.
+    trimmed_text = request.text[:3000]
+    prompt = build_prompt(trimmed_text, request.platform)
 
     def make_request():
-        # Using exact SDK 2.19.0 API shape
-        response = client.models.generate_content(
-            model=GEMINI_MODEL,
-            contents=prompt,
+        chat = client.chats.create(model=GEMINI_MODEL)
+        response = chat.send_message(
+            prompt,
             config=types.GenerateContentConfig(
                 response_mime_type="application/json",
-                response_schema=AnalysisResult,
-                temperature=0.7,
-                max_output_tokens=8192,
-            ),
+                temperature=0.5,
+            )
         )
         return response
 
-    # Retry once on rate limit or high demand
-    try:
-        response = make_request()
-    except Exception as e:
-        error_str = str(e)
-        if "429" in error_str or "503" in error_str or "UNAVAILABLE" in error_str or "rate" in error_str.lower():
-            time.sleep(3)
+    # Retry up to 3 times on rate limit or high demand (503/429)
+    max_retries = 3
+    for attempt in range(max_retries):
+        try:
             response = make_request()
-        else:
+            break
+        except Exception as e:
+            error_str = str(e)
+            is_transient = any(msg in error_str.upper() for msg in ["429", "503", "UNAVAILABLE", "RATE"])
+            if is_transient and attempt < max_retries - 1:
+                time.sleep(2 ** attempt + 2)  # Wait 3s, then 4s, then fail
+                continue
             raise
 
-    # Parse and validate via Pydantic
-    result = AnalysisResult.model_validate_json(response.text)
-    return result
+    raw = response.text or ""
+
+    # If Gemini truncated the JSON, attempt to extract the largest valid
+    # JSON object from the partial response before giving up.
+    try:
+        result = AnalysisResult.model_validate_json(raw)
+        return result
+    except Exception:
+        pass
+
+    # Fallback: find the last complete JSON object in the response
+    match = re.search(r'\{.*\}', raw, re.DOTALL)
+    if match:
+        try:
+            result = AnalysisResult.model_validate_json(match.group())
+            return result
+        except Exception:
+            pass
+
+    raise ValueError(f"Gemini returned unparseable JSON. Raw output (first 200 chars): {raw[:200]}")

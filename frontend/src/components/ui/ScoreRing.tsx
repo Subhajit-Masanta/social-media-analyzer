@@ -21,12 +21,12 @@ export function ScoreRing({ score }: Props) {
       <svg width="140" height="140" viewBox="0 0 120 120" style={{ display: 'block' }}>
         {/* Track */}
         <circle cx="60" cy="60" r={r}
-          fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="10" />
+          fill="none" stroke="rgba(255,255,255,0.06)" strokeWidth="14" />
         {/* Progress */}
         <circle cx="60" cy="60" r={r}
           fill="none"
           stroke={color}
-          strokeWidth="10"
+          strokeWidth="14"
           strokeLinecap="round"
           strokeDasharray={circ}
           strokeDashoffset={offset}

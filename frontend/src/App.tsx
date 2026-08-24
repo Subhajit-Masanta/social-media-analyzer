@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import {
   AppBar, Toolbar, Box, Typography, Chip, Container,
-  Stepper, Step, StepLabel,
 } from '@mui/material';
-import AnalyticsIcon from '@mui/icons-material/Analytics';
+import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
 import { UploadStage } from './components/stages/UploadStage';
 import { useFileProcessor } from './hooks/useFileProcessor';
 import type { Platform } from './types/analysis';
@@ -39,52 +38,46 @@ export default function App() {
         }}
       >
         <Toolbar sx={{ justifyContent: 'space-between' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <AnalyticsIcon sx={{ color: 'primary.main', fontSize: 22 }} />
-            <Typography variant="h6" sx={{
-              fontWeight: 800, letterSpacing: '-0.03em',
-              background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)',
-              WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent',
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, cursor: 'pointer' }} onClick={reset}>
+            <Box sx={{ 
+              background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)', 
+              borderRadius: 1.5, p: 0.5, display: 'flex' 
             }}>
-              PostIQ
+              <DriveFileRenameOutlineIcon sx={{ color: '#fff', fontSize: 20 }} />
+            </Box>
+            <Typography variant="h6" sx={{ fontWeight: 800, letterSpacing: '-0.02em', color: '#f8fafc' }}>
+              Draftline
             </Typography>
           </Box>
-          <Chip
-            label="Beta"
-            size="small"
-            sx={{
-              background: 'rgba(139,92,246,0.12)',
-              border: '1px solid rgba(139,92,246,0.25)',
-              color: 'primary.main',
-              fontWeight: 700,
-              fontSize: '0.68rem',
-              letterSpacing: '0.05em',
-            }}
-          />
         </Toolbar>
       </AppBar>
 
       {/* ── Main ───────────────────────────────────────── */}
-      <Container maxWidth="xl" sx={{ flex: 1, pt: 12, pb: 5 }}>
-        {/* Stepper */}
-        <Stepper activeStep={activeStep} alternativeLabel sx={{ mb: 5 }}>
-          {STEPS.map(label => (
-            <Step key={label}>
-              <StepLabel
+      <Container maxWidth="xl" sx={{ flex: 1, pt: { xs: 3, md: 5 }, pb: 6, display: 'flex', flexDirection: 'column' }}>
+        {/* Custom Pill Stepper */}
+        <Box sx={{ display: 'flex', gap: { xs: 1, sm: 2 }, mb: { xs: 3, md: 4 }, flexWrap: 'wrap', justifyContent: 'flex-start' }}>
+          {STEPS.map((label, i) => {
+            const isActive = activeStep === i;
+            const isCompleted = activeStep > i;
+            return (
+              <Chip
+                key={label}
+                label={`${i + 1}. ${label}`}
                 sx={{
-                  '& .MuiStepLabel-label': { color: 'text.secondary', fontWeight: 600 },
-                  '& .MuiStepLabel-label.Mui-active': { color: 'primary.main' },
-                  '& .MuiStepLabel-label.Mui-completed': { color: 'success.main' },
-                  '& .MuiStepIcon-root': { color: 'rgba(255,255,255,0.1)' },
-                  '& .MuiStepIcon-root.Mui-active': { color: 'primary.main' },
-                  '& .MuiStepIcon-root.Mui-completed': { color: 'success.main' },
+                  bgcolor: isActive ? 'primary.main' : isCompleted ? 'rgba(139,92,246,0.15)' : 'rgba(255,255,255,0.03)',
+                  color: isActive ? '#fff' : isCompleted ? 'primary.light' : 'text.disabled',
+                  fontWeight: isActive ? 700 : 500,
+                  borderRadius: '999px',
+                  px: 1.5,
+                  py: 2.5,
+                  fontSize: '0.85rem',
+                  border: '1px solid',
+                  borderColor: isActive ? 'primary.main' : isCompleted ? 'rgba(139,92,246,0.25)' : 'transparent',
                 }}
-              >
-                {label}
-              </StepLabel>
-            </Step>
-          ))}
-        </Stepper>
+              />
+            );
+          })}
+        </Box>
 
         {/* Stage content */}
         {state.stage === 'upload' && (
@@ -129,11 +122,12 @@ export default function App() {
       <Box
         component="footer"
         sx={{
-          py: 2, textAlign: 'center',
+          py: 3, textAlign: 'center',
           borderTop: '1px solid rgba(255,255,255,0.06)',
+          mt: 'auto'
         }}
       >
-        <Typography variant="caption" color="text.disabled">
+        <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 500, letterSpacing: '0.02em' }}>
           Built by Subhajit Masanta
         </Typography>
       </Box>
