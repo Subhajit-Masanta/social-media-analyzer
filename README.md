@@ -1,6 +1,8 @@
 # PostIQ: Social Media Content Analyzer
 
-PostIQ is an intelligent, full-stack web application that allows users to upload marketing copy (via PDF or Image) and instantly receive a platform-specific engagement analysis and an AI-rewritten post optimized for Twitter, LinkedIn, or Instagram.
+🚀 **Live Demo:** [https://social-media-analyzer-pied.vercel.app/](https://social-media-analyzer-pied.vercel.app/)
+
+PostIQ is an intelligent, full-stack web application that allows users to upload marketing copy (via PDF or Image) and instantly receive a platform-specific engagement analysis and an AI-rewritten post optimized for X, LinkedIn, or Instagram.
 
 ## 🚀 Features
 
@@ -27,15 +29,20 @@ The application is strictly separated into two distinct environments to ensure p
 ## 🏃‍♂️ How to Run Locally
 
 ### 1. Start the Backend
+> **Note to Evaluators:** For security, the `GEMINI_API_KEY` is not included in this repository. The live demo is fully functional, but if you wish to run the backend locally, you will need to provide your own free Gemini API key.
+
 ```bash
 cd backend
 python -m venv .venv
+
 # On Windows: .venv\Scripts\activate
 # On Mac/Linux: source .venv/bin/activate
+
 pip install -r requirements.txt
 
-# Set your Gemini API key
-export GEMINI_API_KEY="your_api_key_here"
+# Create a .env file from the example
+cp .env.example .env
+# Edit .env and insert your GEMINI_API_KEY
 
 # Start the server
 uvicorn api.main:app --reload
