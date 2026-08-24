@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+.venv/
+venv/
+env/
+__pycache__/
+*.pyc
+
+# Environment Variables
+.env
+.env.*
+!.env.example
+
+# Build Outputs
+dist/
+build/
+*.egg-info/
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# IDEs
+.idea/
+.vscode/
+*.swp
