@@ -43,8 +43,8 @@ export function useFileProcessor() {
       let ocrConfidence: number | null = null;
 
       if (file.type === 'application/pdf') {
-        text = await extractTextFromPDF(file, (p) =>
-          patch({ progress: p, label: `Reading PDF… ${p}%` }),
+        text = await extractTextFromPDF(file, (p, label) =>
+          patch({ progress: p, label: label || `Reading PDF… ${p}%` }),
         );
       } else {
         const result = await extractTextFromImage(file, (p, label) =>
