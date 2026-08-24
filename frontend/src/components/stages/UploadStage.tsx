@@ -3,7 +3,6 @@ import { useDropzone } from 'react-dropzone';
 import {
   Box, Typography, LinearProgress, Alert, Chip,
 } from '@mui/material';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import ImageIcon from '@mui/icons-material/Image';
 import SmartToyIcon from '@mui/icons-material/SmartToy';
