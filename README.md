@@ -1,6 +1,6 @@
 # Draftline - Social Media Content Analyzer
 
-🚀 **Live Demo:** [https://social-media-analyzer-pied.vercel.app/](https://social-media-analyzer-pied.vercel.app/)
+🚀 **Live Demo:** [https://social-media-analyzer-subhajit.vercel.app/](https://social-media-analyzer-subhajit.vercel.app/)
 
 Draftline is an intelligent, full-stack web application that allows users to upload marketing copy (via PDF or Image) and instantly receive a platform-specific engagement analysis and an AI-rewritten post optimized for X, LinkedIn, or Instagram.
 
