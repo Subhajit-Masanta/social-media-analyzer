@@ -2,11 +2,12 @@ from pydantic import BaseModel, Field
 from typing import List, Optional, Literal
 
 class AnalyzeRequest(BaseModel):
-    text: str = Field(..., min_length=10, max_length=10000,
+    text: str = Field(..., min_length=10, max_length=25000,
                       description="Extracted text to analyze")
     platform: Literal["X", "Instagram", "LinkedIn"] = Field(
         ..., description="Target social media platform"
     )
+    model: Optional[str] = Field("gemini-3.5-flash", description="Target Gemini model")
 
 class AnalysisResult(BaseModel):
     score: int = Field(..., ge=0, le=100,

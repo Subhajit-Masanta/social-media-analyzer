@@ -6,7 +6,7 @@ from google.genai import types
 from .models import AnalysisResult, AnalyzeRequest
 from .prompt_builder import build_prompt
 
-GEMINI_MODEL = "gemini-3.6-flash"
+
 
 def get_client() -> genai.Client:
     api_key = os.environ.get("GEMINI_API_KEY")
@@ -27,30 +27,15 @@ def analyze_content(request: AnalyzeRequest) -> AnalysisResult:
     trimmed_text = request.text[:3000]
     prompt = build_prompt(trimmed_text, request.platform)
 
-    def make_request():
-        chat = client.chats.create(model=GEMINI_MODEL)
-        response = chat.send_message(
-            prompt,
-            config=types.GenerateContentConfig(
-                response_mime_type="application/json",
-                temperature=0.5,
-            )
+    chat = client.chats.create(model=request.model or "gemini-3.5-flash")
+    response = chat.send_message(
+        prompt,
+        config=types.GenerateContentConfig(
+            response_mime_type="application/json",
+            response_schema=AnalysisResult,
+            temperature=0.5,
         )
-        return response
-
-    # Retry up to 3 times on rate limit or high demand (503/429 error)
-    max_retries = 3
-    for attempt in range(max_retries):
-        try:
-            response = make_request()
-            break
-        except Exception as e:
-            error_str = str(e)
-            is_transient = any(msg in error_str.upper() for msg in ["429", "503", "UNAVAILABLE", "RATE"])
-            if is_transient and attempt < max_retries - 1:
-                time.sleep(2 ** attempt + 2)  # Wait 3s, then 4s, then fail
-                continue
-            raise
+    )
 
     raw = response.text or ""
 

@@ -6,7 +6,7 @@ let currentOnProgress: ((progress: number, label: string) => void) | null = null
 
 /**
  * Returns the cached Tesseract worker, creating it only on the first call. to load fast..
- * The logger is wired so the "recognizing text" progress (0–1) maps to 20–100%.
+ * The logger is wired so the "recognizing text" progress (0–1) maps to 20–100%....
  */
 async function getWorker(): Promise<Worker> {
   if (workerInstance && workerReady) return workerInstance;

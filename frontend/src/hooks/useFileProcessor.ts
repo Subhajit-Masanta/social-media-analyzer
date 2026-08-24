@@ -71,7 +71,10 @@ export function useFileProcessor() {
   const analyze = useCallback(async (text: string, platform: Platform) => {
     patch({ loading: true, error: null, label: 'Analysing with AI…' });
     try {
-      const result = await analyzeContent({ text, platform });
+      const result = await analyzeContent(
+        { text, platform }, 
+        (label) => patch({ label })
+      );
       patch({ result, loading: false, stage: 'results' });
     } catch (err: any) {
       patch({ loading: false, error: err.message ?? 'Analysis failed.' });

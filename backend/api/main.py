@@ -66,4 +66,9 @@ async def analyze(request: AnalyzeRequest) -> AnalysisResult:
                 status_code=429, 
                 detail="AI service temporarily rate-limited (free tier capacity reached). Please try again later."
             )
+        if "503" in error_str or "unavailable" in error_str.lower():
+            raise HTTPException(
+                status_code=503,
+                detail="The AI model is currently experiencing high demand. Please try again."
+            )
         raise HTTPException(status_code=500, detail=f"AI analysis failed: {error_str}")

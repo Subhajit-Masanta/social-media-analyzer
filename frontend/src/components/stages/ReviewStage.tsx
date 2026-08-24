@@ -27,11 +27,12 @@ interface Props {
   ocrConfidence: number | null;
   loading: boolean;
   error: string | null;
+  label?: string;
   onAnalyze: (text: string, platform: Platform) => void;
   onBack: () => void;
 }
 
-export function ReviewStage({ file, text, ocrConfidence, loading, error, onAnalyze, onBack }: Props) {
+export function ReviewStage({ file, text, ocrConfidence, loading, error, label, onAnalyze, onBack }: Props) {
   const [editedText, setEditedText] = useState(text);
   const [platform, setPlatform] = useState<Platform>('X');
   const [modalOpen, setModalOpen] = useState(false);
@@ -53,6 +54,17 @@ export function ReviewStage({ file, text, ocrConfidence, loading, error, onAnaly
 
   const canAnalyze = editedText.trim().length >= 10 && !loading;
   const lowConfidence = ocrConfidence !== null && ocrConfidence < 60;
+  const isRetrying = label?.includes('retrying');
+
+  const handleBackClick = () => {
+    const msg = loading 
+      ? 'Analysis is currently in progress. Are you sure you want to cancel and go back?'
+      : 'Are you sure you want to go back? Your extracted text and any edits will be lost.';
+      
+    if (window.confirm(msg)) {
+      onBack();
+    }
+  };
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: { xs: 3, md: 4 }, maxWidth: 800, mx: 'auto', width: '100%' }}>
@@ -61,7 +73,7 @@ export function ReviewStage({ file, text, ocrConfidence, loading, error, onAnaly
         <Button
           id="back-btn"
           startIcon={<ArrowBackIcon />}
-          onClick={onBack}
+          onClick={handleBackClick}
           size="small"
           sx={{
             mt: 0.5, flexShrink: 0, color: 'text.secondary',
@@ -220,15 +232,23 @@ export function ReviewStage({ file, text, ocrConfidence, loading, error, onAnaly
           <Button
             id="analyze-btn"
             variant="contained"
-            color="primary"
+            color={isRetrying ? "warning" : "primary"}
             size="large"
             fullWidth
-            disabled={!canAnalyze}
-            onClick={() => onAnalyze(editedText.trim(), platform)}
+            disabled={!canAnalyze && !loading}
+            onClick={loading ? undefined : () => onAnalyze(editedText.trim(), platform)}
             startIcon={loading ? <CircularProgress size={18} color="inherit" /> : null}
-            sx={{ py: 2, fontSize: '1.05rem', fontWeight: 600, borderRadius: 3, mt: 1 }}
+            sx={{ 
+              py: 2, 
+              fontSize: '1.05rem', 
+              fontWeight: 600, 
+              borderRadius: 3, 
+              mt: 1,
+              pointerEvents: loading ? 'none' : 'auto',
+              opacity: (loading && !isRetrying) ? 0.9 : 1
+            }}
           >
-            {loading ? 'Analysing content…' : `Analyse for ${platform}`}
+            {loading ? (label || 'Analysing content…') : `Analyse for ${platform}`}
           </Button>
         </CardContent>
       </Card>

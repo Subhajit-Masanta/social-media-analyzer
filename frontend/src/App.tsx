@@ -25,6 +25,16 @@ export default function App() {
     analyze(text, p);
   };
 
+  const handleLogoClick = () => {
+    if (state.stage !== 'upload') {
+      if (window.confirm('Are you sure you want to start over? Your current progress will be lost.')) {
+        reset();
+      }
+    } else {
+      reset();
+    }
+  };
+
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', bgcolor: 'background.default' }}>
       {/*------------- ── Header ─────────────────────────────────────── */}
@@ -38,7 +48,7 @@ export default function App() {
         }}
       >
         <Toolbar sx={{ justifyContent: 'space-between' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, cursor: 'pointer' }} onClick={reset}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, cursor: 'pointer' }} onClick={handleLogoClick}>
             <Box sx={{
               background: 'linear-gradient(135deg, #8b5cf6, #3b82f6)',
               borderRadius: 1.5, p: 0.5, display: 'flex'
@@ -102,6 +112,7 @@ export default function App() {
               ocrConfidence={state.ocrConfidence}
               loading={state.loading}
               error={state.error}
+              label={state.label}
               onAnalyze={handleAnalyze}
               onBack={reset}
             />

@@ -64,17 +64,21 @@ Draftline implements comprehensive error handling across the entire stack:
 - **Massive Files:** Hard limit of 10MB enforced before processing.
 - **No Readable Text:** PDF parser and OCR abort gracefully if less than 5 characters are found.
 - **Document Too Large:** Caps extracted text at ~25,000 characters to prevent crashing the LLM context window.
-- **API Rate Limits / 503:** The backend automatically retries on temporary outages, and the frontend translates permanent 429s into a polite, user-facing wait message.
-- **LLM Hallucinations/Truncation:** Pydantic validators intercept broken JSON or missing keys from the LLM and return a graceful 422 error to the user rather than crashing the application.
+- **API Rate Limits / 503:** The frontend implements an automatic dynamic model fallback routing system. If a high-demand limit is reached, it seamlessly cascades to fallback AI models and clearly communicates the status to the user.
+- **LLM Hallucinations/Truncation:** Google GenAI Structured Outputs and Pydantic validators intercept broken JSON or missing keys from the LLM and return a graceful 422 error to the user rather than crashing the application.
 - **Low OCR Confidence:** Automatically detects blurry images and warns the user to manually review the extracted text before analyzing.
 
 ## 📝 Assessment Write-Up
 
-Draftline is a full-stack web application designed to solve a specific problem: marketing teams often have long-form collateral (PDFs, images, whitepapers) that needs to be manually condensed and reformatted for different social media algorithms. 
+Draftline solves a practical problem: turning long-form collateral, like PDFs and images, into optimized social media posts without manually retyping everything.
 
-The architecture is strictly decoupled for security and performance. The frontend is built in React (Vite) using Material UI to achieve a premium, non-templated SaaS aesthetic. Crucially, all file extraction happens securely client-side. The app dynamically imports `pdfjs-dist` to parse PDFs while maintaining paragraph structure, and uses WebAssembly-powered `tesseract.js` for image OCR. Sensitive files never leave the browser; only the extracted raw text payload is sent to the API.
+The project uses a clean, separated architecture. To ensure privacy, the frontend handles all file processing entirely client-side. Native PDF parsing uses `pdfjs-dist`, while WebAssembly-powered `tesseract.js` handles local image OCR.
 
-The backend is an extremely lightweight FastAPI service serving as a secure bridge to the Gemini 3.7/3.6 Flash LLM. By utilizing the new Google GenAI SDK (`Chat.send_message`) paired with strict Pydantic models, we guarantee structured, type-safe JSON output from the model. Robust error handling is prioritized throughout, featuring an unconditional 15-page limit guardrail, per-page try/catch resilience to prevent a single noisy scanned page from aborting a multi-page document, and real-time confidence warnings to empower users rather than silently failing. The backend implements exponential backoff to handle transient API capacity spikes, while the frontend surfaces a clean 3-stage flow (Upload → Review → Results) allowing users to manually tweak the extracted content before generating the final optimized post.
+A major challenge was handling mixed-content PDFs. To solve this, an auto-OCR fallback was implemented: if a PDF page is just a scanned image without a text layer, the app renders it to a hidden canvas and runs it through Tesseract. This logic is wrapped in a per-page try/catch block so a single bad scan doesn't break document extraction.
+
+On the backend, a lightweight FastAPI service securely connects to Gemini Flash. Using the Google GenAI SDK alongside strict Pydantic models guarantees the LLM always returns predictable JSON for the UI.
+
+Significant effort went into resilient guardrails. Between a 15-page limit to prevent browser hanging, a 10MB file cap, low-confidence OCR warnings, and dynamic client-side AI model routing, the modern application empowers the user and never silently fails. If a model hits a 503 high-demand limit, the frontend automatically cascades through a fallback array, guaranteeing a highly seamless user experience.
 
 ## 🚀 Future Improvements
 - **Multimodal OCR:** The current implementation uses classical OCR (`tesseract.js`) securely in the client to respect the assignment brief. However, to significantly boost accuracy on complex layouts, angled photos, or handwriting, the architecture could be upgraded to skip client-side OCR entirely and pass the raw image to Gemini 3.7 Flash's multimodal vision capabilities directly. This would trade a secondary network round-trip and API quota for state-of-the-art text extraction.

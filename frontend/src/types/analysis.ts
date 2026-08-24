@@ -19,6 +19,7 @@ export type Platform = 'X' | 'Instagram' | 'LinkedIn';
 export interface AnalyzeRequest {
   text: string;
   platform: Platform;
+  model?: string;
 }
 
 export type AppStage = 'upload' | 'review' | 'results';
